@@ -1,2 +1,2 @@
 require 'settings'
-require 'lsp'
+require 'lsp':init()
