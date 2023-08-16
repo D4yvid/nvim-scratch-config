@@ -35,4 +35,19 @@ function M:init()
 	]]
 end
 
+function M:lsp_mappings(bufnr)
+	local map = function (m, k, f) vim.keymap.set(m, k, f, { noremap = true, silent = true, buffer = bufnr }) end
+	local nmap = function (k, f) map('n', k, f) end
+	local imap = function (k, f) map('i', k, f) end
+
+	nmap('gD', vim.lsp.buf.declaration)
+	nmap('gi', vim.lsp.buf.implementation)
+	nmap('gr', vim.lsp.buf.references)
+	nmap('K', vim.lsp.buf.hover)
+	nmap('<leader><leader>', vim.lsp.buf.code_action)
+	nmap('<leader>f', vim.lsp.buf.format)
+
+	imap('<C-s>', vim.lsp.buf.signature_help)
+end
+
 return M

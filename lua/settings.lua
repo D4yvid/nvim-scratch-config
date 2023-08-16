@@ -28,8 +28,9 @@ local M = {
 		updatetime = 200,
 
 		-- Completion-related
-		completeopt = 'menu,menuone,noselect,noinsert',
+		completeopt = 'menu,menuone,noselect,noinsert'
 	},
+
 	colorscheme = 'slate'
 }
 
