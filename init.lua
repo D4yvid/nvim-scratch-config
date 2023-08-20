@@ -5,3 +5,4 @@ local lsp = require 'lsp'
 settings:init()
 mappings:init()
 lsp:init()
+
