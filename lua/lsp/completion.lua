@@ -17,8 +17,14 @@ function M:setup_buffer(buffer, client)
 	})
 end
 
-function M:insert_enter()
-	-- TODO: Work in the phone for now
+function M:handle_completion(results)
+	vim.notify("Completion results: " .. #vim.inspect(results.items))
+end
+
+function M:on_insert_enter(buf)
+	buf:request_completion(function (results)
+		self:handle_completion(results)
+	end)
 end
 
 return M

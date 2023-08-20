@@ -6,20 +6,20 @@ local M = {
 	}
 }
 
-function M:on_attach(bufnr, client)
+function M.on_attach(client, buffer)
 	local mappings = require 'mappings'
+	local completion = require 'lsp.completion'
 
-	mappings:lsp_mappings(bufnr)
+	completion:setup_buffer(buffer, client)
+	mappings:lsp_mappings(buffer)
 end
 
 function M:start_lsp(filetype, opts)
+	local buffer = vim.fn.bufnr("%")
 	local cid = self.running_clients[filetype]
 
-	if not self.running_clients[filetype] then
-		if not opts.on_attach then
-			opts.on_attach = on_attach
-		end
-		
+	if not cid then
+		opts.on_attach = self.on_attach
 		opts.name = 'lsp_' .. filetype
 
 		cid = vim.lsp.start_client(opts)
@@ -27,7 +27,7 @@ function M:start_lsp(filetype, opts)
 		self.running_clients[filetype] = cid
 	end
 
-	vim.lsp.buf_attach_client(0, cid)
+	vim.lsp.buf_attach_client(buffer, cid)
 end
 
 function M:setup_lsp(opts)
@@ -35,13 +35,14 @@ function M:setup_lsp(opts)
 
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = filetype,
-		callback = function () self:start_lsp(filetype, opts) end
+		callback = function ()
+			self:start_lsp(filetype, opts)
+		end
 	})
 end
 
 function M:init()
 	local diagnostics = require 'lsp.diagnostics'
-
 	diagnostics:init()
 
 	for _, server in ipairs(self.servers) do
