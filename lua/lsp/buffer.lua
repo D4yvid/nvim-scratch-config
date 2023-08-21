@@ -1,16 +1,18 @@
-local M = {}
+local BufferState = { NORMAL = 0, COMPLETION = 1, INSERT = 2 }
+local Buffer = {}
 
-function M:new(buffer, client)
-	local self = setmetatable({}, { __index = M })
+function Buffer:new(buffer, client)
+	local self = setmetatable({}, { __index = Buffer })
 
 	self.buffer = buffer
 	self.client = client
+	self.state = BufferState.NORMAL
 	self.requests = {}
 
 	return self
 end
 
-function M:request_completion(callback)
+function Buffer:request_completion(callback)
 	local params = vim.lsp.util.make_position_params(0, self.client.offset_encoding)
 
 	self:make_request('textDocument/completion', params, function (result)
@@ -18,7 +20,7 @@ function M:request_completion(callback)
 	end)
 end
 
-function M:make_request(method, params, callback)
+function Buffer:make_request(method, params, callback)
 	-- heavily inspired on cmp_nvim_lsp
 
 	if self.requests[method] ~= nil then
@@ -50,4 +52,4 @@ function M:make_request(method, params, callback)
 	end)
 end
 
-return M
+return { Buffer = Buffer, BufferState = BufferState }
